@@ -1,0 +1,16 @@
+{
+  "version": "1.0",
+  "defaultProvider": "unpkg",
+  "libraries": [
+    {
+      "library": "datatables@1.10.18",
+      "destination": "wwwroot/datatables/",
+      "files": [
+        "media/css/jquery.dataTables.css",
+        "media/css/jquery.dataTables.min.css",
+        "media/js/jquery.dataTables.js",
+        "media/js/jquery.dataTables.min.js"
+      ]
+    }
+  ]
+}
