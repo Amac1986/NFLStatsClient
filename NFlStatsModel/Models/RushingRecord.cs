@@ -7,7 +7,6 @@ namespace NFLStats.Model.Models
     {
         [Required]
         [JsonProperty(PropertyName = "Player")]
-
         public string PlayerName { get; set; } = "";
 
         [Required]
@@ -17,7 +16,6 @@ namespace NFLStats.Model.Models
         [Required]
         [JsonProperty(PropertyName = "Pos")]
         public string Position { get; set; } = "";
-
         [JsonProperty(PropertyName = "Att")]
         public int Attempts { get; set; }
 

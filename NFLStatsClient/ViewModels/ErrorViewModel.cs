@@ -1,4 +1,4 @@
-namespace NFLStatsClient.ViewModels
+namespace NFLStats.Client.ViewModels
 {
     public class ErrorViewModel
     {

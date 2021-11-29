@@ -1,9 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using NFLStatsClient.ViewModels;
+using NFLStats.Client.ViewModels;
 using System.Diagnostics;
 using NFLStats.Services.Services;
 
-namespace NFLStatsClient.Controllers
+namespace NFLStats.Client.Controllers
 {
     public class NFLStatsController : Controller
     {
@@ -18,9 +18,16 @@ namespace NFLStatsClient.Controllers
 
         public IActionResult Index()
         {
-            var vm = _statisticsService.GetRushingRecords(1, "Yards");
-            return View();
+            var vm = GetRushStatisticsViewModel();
+            return View("Rushing", vm);
         }
+
+        //[HttpPost]
+        //public IActionResult GetStats(StatisticsViewModel model)
+        //{
+            
+
+        //}
 
         public IActionResult Privacy()
         {
@@ -31,6 +38,15 @@ namespace NFLStatsClient.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private RushingViewModel GetRushStatisticsViewModel()
+        {
+            var model = new RushingViewModel
+            {
+                RushingRecords = _statisticsService.GetRushingRecords(1, "Yards")
+            };
+            return model;
         }
     }
 }

@@ -1,0 +1,46 @@
+﻿@page
+@model NFLStats.Client.ViewModels.RushingViewModel
+@{
+}
+
+<div id="TableContainer" class="table-responsive">
+    <table class="table">
+    <thead>
+        <th>Player</th>
+        <th>Team</th>
+        <th>Pos</th>
+        <th>Att</th>
+        <th>Att/G</th>
+        <th>Avg</th>
+        <th>Yds/G</th>
+        <th>TD</th>
+        <th>Lng</th>
+        <th>1st</th>
+        <th>1st%</th>
+        <th>20+</th>
+        <th>40+</th>
+        <th>FUM</th>
+    </thead>
+    @{
+        foreach (var record in Model.RushingRecords)
+        {
+            <tr>
+                <td>@record.PlayerName</td>
+                <td>@record.TeamName</td>
+                <td>@record.Position</td>
+                <td>@record.Attempts</td>
+                <td>@record.AttemptsPerGame</td>
+                <td>@record.AverageYards</td>
+                <td>@record.YardsPerGame</td>
+                <td>@record.TouchDowns</td>
+                <td>@record.LongestRun</td>
+                <td>@record.FirstDowns</td>
+                <td>@record.PercentageFirstDowns</td>
+                <td>@record.Runs20Plus</td>
+                <td>@record.Runs40Plus</td>
+                <td>@record.Fumbles</td>
+            </tr>
+        }
+    }
+    </table>
+</div>

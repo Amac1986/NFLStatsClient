@@ -9,7 +9,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NFLStats.Model", "NFlStatsM
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NFLStats.Services", "NFLStatsServices\NFLStats.Services.csproj", "{C3089A06-11C5-49D6-B396-E2B063847BA5}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NFLStats.Data", "NFLStats.Data\NFLStats.Data.csproj", "{1CF1DEEB-E6AD-4A48-826B-9A8B5CD0F943}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NFLStats.Data", "NFLStats.Data\NFLStats.Data.csproj", "{1CF1DEEB-E6AD-4A48-826B-9A8B5CD0F943}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -1,0 +1,76 @@
+﻿@model NFLStats.Client.ViewModels.RushingViewModel
+@{
+    ViewData["Title"] = "NFL Rushing Yards 2021";
+}
+
+<nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+    <div class="container-fluid">
+
+        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#subMenu">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div id="subMenu" class="navbar-collapse collapse">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="NFLStats" asp-action="Index">Rushing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="NFLStats" asp-action="Passing">Passing</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="NFLStats" asp-action="Receiving">Receiving</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link text-dark" asp-area="" asp-controller="NFLStats" asp-action="Fumbles">Fumbles</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div id="TableContainer" class="table-responsive">
+    <table class="table">
+        <thead>
+        <tr>
+            <th>Player</th>
+            <th>Team</th>
+            <th>Pos</th>
+            <th>Yds</th>
+            <th>Att</th>
+            <th>Att/G</th>
+            <th>Avg</th>
+            <th>Yds/G</th>
+            <th>TD</th>
+            <th>Lng</th>
+            <th>1st</th>
+            <th>1st%</th>
+            <th>20+</th>
+            <th>40+</th>
+            <th>FUM</th>
+        </tr>
+        </thead>
+
+        @{
+            foreach (var record in Model.RushingRecords)
+            {
+                <tr>
+                    <td>@record.PlayerName</td>
+                    <td>@record.TeamName</td>
+                    <td>@record.Position</td>
+                    <td>@record.Yards</td>
+                    <td>@record.Attempts</td>
+                    <td>@record.AttemptsPerGame</td>
+                    <td>@record.AverageYards</td>
+                    <td>@record.YardsPerGame</td>
+                    <td>@record.TouchDowns</td>
+                    <td>@record.LongestRun</td>
+                    <td>@record.FirstDowns</td>
+                    <td>@record.PercentageFirstDowns</td>
+                    <td>@record.Runs20Plus</td>
+                    <td>@record.Runs40Plus</td>
+                    <td>@record.Fumbles</td>
+                </tr>
+            }
+        }
+    </table>
+</div>
