@@ -3,7 +3,7 @@
     ViewData["Title"] = "NFL Rushing Yards 2021";
 }
 
-<nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
+@*<nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
     <div class="container-fluid">
 
         <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#subMenu">
@@ -26,11 +26,18 @@
             </ul>
         </div>
     </div>
-</nav>
+</nav>*@
+
+
+
 
 <div id="TableContainer" class="table-responsive">
-    <table class="table">
-        <thead>
+    <div class="form-">
+        <label class="">Search:</label>
+        <input type="search" class="col-lg-3 offset-lg-6 col-sm-9 "/>
+    </div>
+    <table class="table table-striped table-bordered ">
+        <thead class="thead-dark">
         <tr>
             <th>Player</th>
             <th>Team</th>
@@ -49,7 +56,7 @@
             <th>FUM</th>
         </tr>
         </thead>
-
+        <tbody>
         @{
             foreach (var record in Model.RushingRecords)
             {
@@ -72,5 +79,11 @@
                 </tr>
             }
         }
+        </tbody>
     </table>
+</div>
+<div id="tableFooter">
+    <button type="button" class="btn btn-success">
+        Next Page
+    </button>
 </div>
