@@ -25,7 +25,9 @@ namespace NFLStats.Model.Models
         public float AttemptsPerGame { get; set; }
 
         [JsonProperty(PropertyName = "Yds")] 
-        public string Yards { get; set; } = "0";
+        public string Yds { get; set; } = "0";
+
+        public int Yards => int.Parse(Yds. Replace(",", ""));
 
         [JsonProperty(PropertyName = "Avg")]
         public float AverageYards { get; set; }

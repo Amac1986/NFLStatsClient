@@ -18,7 +18,7 @@ namespace NFLStatsClient.Controllers
 
         public IActionResult Index()
         {
-            var vm = _statisticsService.GetRushingRecords(1, "Yards");
+            var vm = _statisticsService.GetRushingRecords(1, "Yards",  true);
             return View();
         }
 

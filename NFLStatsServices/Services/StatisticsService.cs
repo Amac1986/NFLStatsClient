@@ -14,7 +14,7 @@ namespace NFLStats.Services.Services
 {
     public interface IStatisticsService
     {
-        List<RushingRecord> GetRushingRecords(int pageNumber, string sortBy);
+        List<RushingRecord> GetRushingRecords(int pageNumber, string sortBy, bool ascending = false);
     }
 
     public class FileStatisticsService : IStatisticsService
@@ -27,7 +27,7 @@ namespace NFLStats.Services.Services
             _configuration = configuration;
             _memoryCache = memoryCache;
         }
-        public List<RushingRecord> GetRushingRecords(int pageNumber, string sortBy)
+        public List<RushingRecord> GetRushingRecords(int pageNumber, string sortBy, bool ascending = false)
         {
             if (!_memoryCache.TryGetValue("RushingRecords", out IEnumerable<RushingRecord> records))
             {
@@ -44,18 +44,21 @@ namespace NFLStats.Services.Services
 
             var pageSize = int.Parse(_configuration["ViewSettings:PageSize"]);
 
-            return SortRecords(rushingRecords, sortBy, pageSize, pageNumber).ToList() ?? new List<RushingRecord>();
+            return SortRecords(rushingRecords, sortBy, pageSize, pageNumber, ascending).ToList() ?? new List<RushingRecord>();
         }
 
-        private IEnumerable<T> SortRecords<T>(IEnumerable<T> unsorted, string sortBy, int pageSize, int pageNumber)
+        private IEnumerable<T> SortRecords<T>(IEnumerable<T> unsorted, string sortBy, int pageSize, int pageNumber, bool ascending = false)
         {
             if (unsorted is null || !unsorted.Any()) return new List<T>();
 
             var skipRecords = (pageNumber - 1) * pageSize;
 
-            return unsorted.OrderByDescending(r => r.GetType().GetProperty(sortBy).Name)
-                .Skip(skipRecords)
-                .Take(pageSize);
+            return ascending ? unsorted.OrderBy(r => r.GetType().GetProperty(sortBy).GetValue(r))
+                                        .Skip(skipRecords)
+                                        .Take(pageSize)
+                : unsorted.OrderByDescending(r => r.GetType().GetProperty(sortBy).GetValue(r))
+                            .Skip(skipRecords)
+                            .Take(pageSize);
 
         }
     }
