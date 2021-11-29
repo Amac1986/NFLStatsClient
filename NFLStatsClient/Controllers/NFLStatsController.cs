@@ -1,20 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NFLStatsClient.ViewModels;
 using System.Diagnostics;
+using NFLStats.Services.Services;
 
 namespace NFLStatsClient.Controllers
 {
     public class NFLStatsController : Controller
     {
         private readonly ILogger<NFLStatsController> _logger;
+        private readonly IStatisticsService _statisticsService;
 
-        public NFLStatsController(ILogger<NFLStatsController> logger)
+        public NFLStatsController(ILogger<NFLStatsController> logger, IStatisticsService statisticsService)
         {
+            _statisticsService = statisticsService;
             _logger = logger;
         }
 
         public IActionResult Index()
         {
+            var vm = _statisticsService.GetRushingRecords(1, "Yards");
             return View();
         }
 
