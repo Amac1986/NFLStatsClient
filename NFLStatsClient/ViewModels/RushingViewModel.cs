@@ -6,8 +6,11 @@ namespace NFLStats.Client.ViewModels
     {
         public int PageNumber { get; set; }
 
-        public int SortDirection { get; set; }
+        public bool SortAscending { get; set; } = false;
 
+        public string PlayerNameFilter { get; set; } = "";
+
+        public string SortBy { get; set; } = "Yards";
 
         public List<RushingRecord> RushingRecords { get; set; } = new List<RushingRecord>();
     }

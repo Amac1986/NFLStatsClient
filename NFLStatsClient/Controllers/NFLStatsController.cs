@@ -22,12 +22,18 @@ namespace NFLStats.Client.Controllers
             return View("Rushing", vm);
         }
 
-        //[HttpPost]
-        //public IActionResult GetStats(StatisticsViewModel model)
-        //{
-            
+        [HttpPost]
+        public IActionResult GetStats(RushingViewModel model)
+        {
+            if (string.IsNullOrEmpty(model.PlayerNameFilter))
+            {
+                model.PlayerNameFilter = "";
+            }
 
-        //}
+            var vm = GetRushStatisticsViewModel(model);
+            return PartialView("StatsPartials/_RushingTable", vm);
+
+        }
 
         public IActionResult Privacy()
         {
@@ -44,9 +50,22 @@ namespace NFLStats.Client.Controllers
         {
             var model = new RushingViewModel
             {
-                RushingRecords = _statisticsService.GetRushingRecords(1, "Yards")
+                RushingRecords = _statisticsService.GetRushingRecords(1, "Yards", "")
             };
             return model;
+        }
+
+        private RushingViewModel GetRushStatisticsViewModel(RushingViewModel model)
+        {
+            var returnModel = new RushingViewModel
+            {
+                PageNumber = model.PageNumber,
+                SortAscending = model.SortAscending,
+                PlayerNameFilter = model.PlayerNameFilter,
+                SortBy = model.SortBy,
+                RushingRecords = _statisticsService.GetRushingRecords(model.PageNumber, model.SortBy, model.PlayerNameFilter, model.SortAscending)
+            };
+            return returnModel;
         }
     }
 }

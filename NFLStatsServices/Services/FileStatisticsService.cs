@@ -14,7 +14,7 @@ namespace NFLStats.Services.Services
 {
     public interface IStatisticsService
     {
-        List<RushingRecord> GetRushingRecords(int pageNumber, string sortBy, bool ascending = false);
+        List<RushingRecord> GetRushingRecords(int pageNumber, string sortBy, string playerFilter, bool ascending = false);
     }
 
     public class FileStatisticsService : IStatisticsService
@@ -27,7 +27,7 @@ namespace NFLStats.Services.Services
             _configuration = configuration;
             _memoryCache = memoryCache;
         }
-        public List<RushingRecord> GetRushingRecords(int pageNumber, string sortBy, bool ascending = false)
+        public List<RushingRecord> GetRushingRecords(int pageNumber, string sortBy, string playerFilter, bool ascending = false)
         {
             if (!_memoryCache.TryGetValue("RushingRecords", out IEnumerable<RushingRecord> records))
             {
@@ -44,7 +44,7 @@ namespace NFLStats.Services.Services
 
             var pageSize = int.Parse(_configuration["ViewSettings:PageSize"]);
 
-            return SortRecords(rushingRecords, sortBy, pageSize, pageNumber, ascending).ToList() ?? new List<RushingRecord>();
+            return SortRecords(rushingRecords, sortBy, pageSize, pageNumber, ascending).Where(r => r.PlayerName.Contains(playerFilter)).ToList() ?? new List<RushingRecord>();
         }
 
         private IEnumerable<T> SortRecords<T>(IEnumerable<T> unsorted, string sortBy, int pageSize, int pageNumber, bool ascending = false)

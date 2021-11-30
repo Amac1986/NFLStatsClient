@@ -28,62 +28,81 @@
     </div>
 </nav>*@
 
-
-
-
+<div class="input-group">
+    <span class="input-group-text">Search:</span>
+    <input id="search" type="text" class="form-control">
+</div>
 <div id="TableContainer" class="table-responsive">
-    <div class="form-">
-        <label class="">Search:</label>
-        <input type="search" class="col-lg-3 offset-lg-6 col-sm-9 "/>
-    </div>
     <table class="table table-striped table-bordered ">
         <thead class="thead-dark">
-        <tr>
-            <th>Player</th>
-            <th>Team</th>
-            <th>Pos</th>
-            <th>Yds</th>
-            <th>Att</th>
-            <th>Att/G</th>
-            <th>Avg</th>
-            <th>Yds/G</th>
-            <th>TD</th>
-            <th>Lng</th>
-            <th>1st</th>
-            <th>1st%</th>
-            <th>20+</th>
-            <th>40+</th>
-            <th>FUM</th>
+        <tr class="statistics-table">
+            <th data-column-name="PlayerName">Player</th>
+            <th data-column-name="TeamName">Team</th>
+            <th data-column-name="Position">Pos</th>
+            <th data-column-name="Yards" >Yds</th>
+            <th data-column-name="Attempts">Att</th>
+            <th data-column-name="AttemptsPerGame">Att/G</th>
+            <th data-column-name="AverageYards">Avg</th>
+            <th data-column-name="YardsPerGame">Yds/G</th>
+            <th data-column-name="TouchDowns">TD</th>
+            <th data-column-name="LongestRun">Lng</th>
+            <th data-column-name="FirstDowns">1st</th>
+            <th data-column-name="PercentageFirstDowns">1st%</th>
+            <th data-column-name="Runs20Plus">20+</th>
+            <th data-column-name="Runs40Plus">40+</th>
+            <th data-column-name="Fumbles">FUM</th>
         </tr>
         </thead>
-        <tbody>
-        @{
-            foreach (var record in Model.RushingRecords)
-            {
-                <tr>
-                    <td>@record.PlayerName</td>
-                    <td>@record.TeamName</td>
-                    <td>@record.Position</td>
-                    <td>@record.Yards</td>
-                    <td>@record.Attempts</td>
-                    <td>@record.AttemptsPerGame</td>
-                    <td>@record.AverageYards</td>
-                    <td>@record.YardsPerGame</td>
-                    <td>@record.TouchDowns</td>
-                    <td>@record.LongestRun</td>
-                    <td>@record.FirstDowns</td>
-                    <td>@record.PercentageFirstDowns</td>
-                    <td>@record.Runs20Plus</td>
-                    <td>@record.Runs40Plus</td>
-                    <td>@record.Fumbles</td>
-                </tr>
-            }
-        }
+        <tbody class="table-contents">
+            @{Html.RenderPartialAsync("StatsPartials/_RushingTable", Model);}
         </tbody>
     </table>
+    <div id="tableFooter">
+        <button type="button" class="btn btn-success">
+            Next Page
+        </button>
+    </div>
 </div>
-<div id="tableFooter">
-    <button type="button" class="btn btn-success">
-        Next Page
-    </button>
-</div>
+
+@section Scripts {
+    <script type="text/javascript">
+        (function() {
+            var callStats = function(postData) {
+                $.ajax({
+                    data: postData,
+                    type: 'POST',
+                    url: '@Url.Action("GetStats", "NFLStats")'
+                }).done(function(data, textStatus, jqXhr) {
+                    $(".table-contents").html(jqXhr.responseText);
+                }).fail(function(jqXhr, textStatus, errorThrown) {
+                    //TODO
+                });
+            };
+
+            var setPostData = function(event) {
+                var target = $(event.target);
+                if (target.hasClass('sort')) {
+                    target.addClass('asc');
+                } else {
+                    $('.statistics-table th').removeClass('sort');
+                    target.addClass('sort');
+                }
+                
+                var postData = {
+                    "PageNumber": 1,
+                    "SortAscending": "false",
+                    "PlayerNameFilter": $('#search').val(),
+                    "SortBy": target.data("columnName")
+                }
+                callStats(postData);
+            }
+
+            $('.statistics-table th').click(setPostData);
+
+
+            $('#search').change(setPostData);
+
+
+        })();
+    </script>
+}
