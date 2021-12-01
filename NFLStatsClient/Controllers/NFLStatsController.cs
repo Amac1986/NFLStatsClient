@@ -22,8 +22,21 @@ namespace NFLStats.Client.Controllers
             return View("Rushing", vm);
         }
 
+        //public IActionResult PassingHome()
+        //{
+        //    var vm = GetRushStatisticsViewModel();
+        //    return View("Passing", vm);
+        //}
+
+        //[HttpPost]
+        //public IActionResult GetPassingStats()
+        //{
+        //    var vm = GetRushStatisticsViewModel(model);
+        //    return PartialView("StatsPartials/_PassingTable", vm);
+        //}
+
         [HttpPost]
-        public IActionResult GetStats(RushingViewModel model)
+        public IActionResult GetRushingStats(RushingViewModel model)
         {
             if (string.IsNullOrEmpty(model.PlayerNameFilter))
             {

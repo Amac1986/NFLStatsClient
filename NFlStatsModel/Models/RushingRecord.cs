@@ -25,7 +25,7 @@ namespace NFLStats.Model.Models
         [JsonProperty(PropertyName = "Yds")] 
         public string Yds { get; set; } = "0";
 
-        public int Yards => int.Parse(Yds. Replace(",", ""));
+        public int Yards => int.Parse(Yds.Replace(",", ""));
 
         [JsonProperty(PropertyName = "Avg")]
         public float AverageYards { get; set; }
@@ -37,7 +37,9 @@ namespace NFLStats.Model.Models
         public int TouchDowns { get; set; }
 
         [JsonProperty(PropertyName = "Lng")]
-        public string LongestRun { get; set; } = "0";
+        public string Lng { get; set; } = "0";
+
+        public int LongestRun => int.Parse(Lng.Replace("T", ""));
 
         [JsonProperty(PropertyName = "1st")]
         public int FirstDowns { get; set; }

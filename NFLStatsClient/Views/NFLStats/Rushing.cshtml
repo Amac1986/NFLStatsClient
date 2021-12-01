@@ -1,132 +1,28 @@
 ﻿@model NFLStats.Client.ViewModels.RushingViewModel
 @{
     ViewData["Title"] = "NFL Rushing Yards 2021";
+    ViewData["url"] = Url.Action("GetRushingStats", "NFLStats");
 }
 
-@*<nav class="navbar navbar-expand-sm navbar-light bg-white border-bottom box-shadow mb-3">
-    <div class="container-fluid">
-
-        <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#subMenu">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div id="subMenu" class="navbar-collapse collapse">
-            <ul class="navbar-nav">
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="NFLStats" asp-action="Index">Rushing</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="NFLStats" asp-action="Passing">Passing</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="NFLStats" asp-action="Receiving">Receiving</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link text-dark" asp-area="" asp-controller="NFLStats" asp-action="Fumbles">Fumbles</a>
-                </li>
-            </ul>
-        </div>
-    </div>
-</nav>*@
+@*@{Html.RenderPartialAsync("StatsPartials/_StatsNavBar");}*@
 
 <div class="input-group">
     <span class="input-group-text">Search:</span>
     <input id="search" type="text" class="form-control">
     @Html.Hidden("SortBy")
     @Html.Hidden("PageNumber")
+    @Html.Hidden("url")
 </div>
 <div id="TableContainer" class="table-responsive">
     <table class="table table-striped table-bordered ">
-        <thead class="thead-dark">
-        <tr class="statistics-table">
-            <th data-column-name="PlayerName">Player</th>
-            <th data-column-name="TeamName">Team</th>
-            <th data-column-name="Position">Pos</th>
-            <th data-column-name="Yards" >Yds</th>
-            <th data-column-name="Attempts">Att</th>
-            <th data-column-name="AttemptsPerGame">Att/G</th>
-            <th data-column-name="AverageYards">Avg</th>
-            <th data-column-name="YardsPerGame">Yds/G</th>
-            <th data-column-name="TouchDowns">TD</th>
-            <th data-column-name="LongestRun">Lng</th>
-            <th data-column-name="FirstDowns">1st</th>
-            <th data-column-name="PercentageFirstDowns">1st%</th>
-            <th data-column-name="Runs20Plus">20+</th>
-            <th data-column-name="Runs40Plus">40+</th>
-            <th data-column-name="Fumbles">FUM</th>
-        </tr>
-        </thead>
+            @{Html.RenderPartialAsync("StatsPartials/_RushingHead");}
         <tbody class="table-contents">
             @{Html.RenderPartialAsync("StatsPartials/_RushingTable", Model);}
         </tbody>
     </table>
-    <div id="tableFooter">
+<div id="tableFooter">
         <button id="nextPage" type="button" class="btn btn-success">
             Next Page
         </button>
     </div>
 </div>
-
-@section Scripts {
-    <script type="text/javascript">
-        (function() {
-            var callStats = function(postData) {
-                $.ajax({
-                    data: postData,
-                    type: 'POST',
-                    url: '@Url.Action("GetStats", "NFLStats")'
-                }).done(function(data, textStatus, jqXhr) {
-                    $(".table-contents").html(jqXhr.responseText);
-                }).fail(function(jqXhr, textStatus, errorThrown) {
-                    //TODO
-                });
-            };
-
-            var setPageNumber = function(event) {
-                if ($(event.target).is($('#nextPage'))) {
-                    var curPageNum = parseInt($('#PageNumber').val());
-                    var pageNumber = curPageNum + 1;
-                    $('#PageNumber').val(pageNumber.toString());
-                } else {
-                    $('#PageNumber').val("1");
-                }
-            }
-
-            var handleSortOrder = function(event) {
-                if (event.target.nodeName === "TH") {
-                    var target = $(event.target);
-                    if (target.hasClass('sort')) {
-                        target.toggleClass('asc');
-                    } else {
-                        $('.statistics-table th').removeClass();
-                        target.addClass('sort');
-                    }
-                }
-            }
-
-            var setPostData = function(event) {
-
-                setPageNumber(event);
-
-                handleSortOrder(event);
-
-                var postData = {
-                    "PageNumber": parseInt($('#PageNumber').val()),
-                    "SortAscending": $('.statistics-table th').hasClass('asc'),
-                    "PlayerNameFilter": $('#search').val(),
-                    "SortBy": $('.sort').data("columnName")
-                }
-                callStats(postData);
-            }
-
-            $('.statistics-table th').click(setPostData);
-            $('#search').keyup(setPostData);
-            $('#nextPage').click(setPostData);
-
-
-            $(document).ready(function() {
-                var sort = $('#SortBy').val();
-                $(`[data-column-name='${sort}']`).addClass('sort');
-            });
-        })();
-    </script>
-}
