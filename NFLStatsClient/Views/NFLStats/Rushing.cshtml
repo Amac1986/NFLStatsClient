@@ -6,13 +6,20 @@
 
 @*@{Html.RenderPartialAsync("StatsPartials/_StatsNavBar");}*@
 
-<div class="input-group">
-    <span class="input-group-text">Search:</span>
-    <input id="search" type="text" class="form-control">
+<div class="input-group mb-3">
     @Html.Hidden("SortBy")
     @Html.Hidden("PageNumber")
     @Html.Hidden("url")
+    <input id="search" type="text" class="form-control" aria-placeholder="Search" aria-label="Search">
+    <div class="input-group-append">
+        <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Download</button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><span id="subSet" data-url="@Url.Action("DownloadPartialRushingStats", "NFLStats")" class="dropdown-item">Download</span></li>
+            <li><span id="fullSet" data-url="@Url.Action("DownloadFullRushingStats", "NFLStats")" class="dropdown-item">Download Full Data Set</span></li>
+        </ul>
+    </div>
 </div>
+<br/>
 <div id="TableContainer" class="table-responsive">
     <table class="table table-striped table-bordered ">
             @{Html.RenderPartialAsync("StatsPartials/_RushingHead");}
@@ -21,7 +28,7 @@
         </tbody>
     </table>
 <div id="tableFooter">
-        <button id="nextPage" type="button" class="btn btn-success">
+    <button id="nextPage" type="button" class="btn btn-success">
             Next Page
         </button>
     </div>

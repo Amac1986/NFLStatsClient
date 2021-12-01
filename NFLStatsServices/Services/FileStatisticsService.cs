@@ -9,12 +9,17 @@ using NFLStats.Model.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Caching.Memory;
+using NFLStats.Services.Helpers;
 
 namespace NFLStats.Services.Services
 {
     public interface IStatisticsService
     {
-        List<RushingRecord> GetRushingRecords(int pageNumber, string sortBy, string playerFilter, bool ascending = false);
+        List<RushingRecord> GetPagedRushingRecords(int pageNumber, string sortBy, string playerFilter, bool ascending = false);
+
+        List<RushingRecord> GetAllRushingRecords(string sortBy, bool ascending = false);
+
+        List<RushingRecord> GetFilteredRushingRecords(string sortBy, string playerFilter, bool ascending = false);
     }
 
     public class FileStatisticsService : IStatisticsService
@@ -27,7 +32,42 @@ namespace NFLStats.Services.Services
             _configuration = configuration;
             _memoryCache = memoryCache;
         }
-        public List<RushingRecord> GetRushingRecords(int pageNumber, string sortBy, string playerFilter, bool ascending = false)
+        public List<RushingRecord> GetPagedRushingRecords(int pageNumber, string sortBy, string playerFilter, bool ascending = false)
+        {
+
+            var rushingRecords = ReadRecordsFromFile();
+
+            var pageSize = int.Parse(_configuration["ViewSettings:PageSize"]);
+
+            return rushingRecords
+                .Where(r => r.PlayerName.ToLowerInvariant().Contains(playerFilter.ToLowerInvariant()))
+                .SortRecords(sortBy, ascending)
+                .PageRecords(pageSize, pageNumber)
+                .ToList();
+        }
+
+        public List<RushingRecord> GetAllRushingRecords(string sortBy, bool ascending = false)
+        {
+            var rushingRecords = ReadRecordsFromFile();
+
+            return rushingRecords
+                .SortRecords(sortBy, ascending)
+                .ToList();
+        }
+
+        public List<RushingRecord> GetFilteredRushingRecords(string sortBy, string playerFilter, bool ascending = false)
+        {
+            var rushingRecords = ReadRecordsFromFile();
+
+            var pageSize = int.Parse(_configuration["ViewSettings:PageSize"]);
+
+            return rushingRecords
+                .Where(r => r.PlayerName.ToLowerInvariant().Contains(playerFilter.ToLowerInvariant()))
+                .SortRecords(sortBy, ascending)
+                .ToList();
+        }
+
+        private IEnumerable<RushingRecord> ReadRecordsFromFile()
         {
             if (!_memoryCache.TryGetValue("RushingRecords", out IEnumerable<RushingRecord> records))
             {
@@ -40,26 +80,7 @@ namespace NFLStats.Services.Services
                 _memoryCache.Set("RushingRecords", records, cacheEntryOptions);
             }
 
-            var rushingRecords = records;
-
-            var pageSize = int.Parse(_configuration["ViewSettings:PageSize"]);
-
-            return SortRecords(rushingRecords.Where(r => r.PlayerName.ToLowerInvariant().Contains(playerFilter.ToLowerInvariant())), sortBy, pageSize, pageNumber, ascending).ToList() ?? new List<RushingRecord>();
-        }
-
-        private IEnumerable<T> SortRecords<T>(IEnumerable<T> unsorted, string sortBy, int pageSize, int pageNumber, bool ascending = false)
-        {
-            if (unsorted is null || !unsorted.Any()) return new List<T>();
-
-            var skipRecords = (pageNumber - 1) * pageSize;
-
-            return ascending ? unsorted.OrderBy(r => r.GetType().GetProperty(sortBy).GetValue(r))
-                                        .Skip(skipRecords)
-                                        .Take(pageSize)
-                : unsorted.OrderByDescending(r => r.GetType().GetProperty(sortBy).GetValue(r))
-                            .Skip(skipRecords)
-                            .Take(pageSize);
-
+            return records;
         }
     }
 }

@@ -3,7 +3,7 @@ using Newtonsoft.Json;
 
 namespace NFLStats.Model.Models
 {
-    public class RushingRecord
+    public class RushingRecord : IConvertCSV
     {
         [Required]
         [JsonProperty(PropertyName = "Player")]
@@ -56,6 +56,28 @@ namespace NFLStats.Model.Models
         [JsonProperty(PropertyName = "FUM")]
         public int Fumbles { get; set; }
 
+        public string ToCSV()
+        {
+            return PlayerName + "," +
+                       TeamName + "," +
+                       Position + "," +
+                       Yards + "," +
+                       Attempts + "," +
+                       AttemptsPerGame + "," +
+                       AverageYards + "," +
+                       YardsPerGame + "," +
+                       TouchDowns + "," +
+                       Lng + "," +
+                       FirstDowns + "," +
+                       PercentageFirstDowns + "," +
+                       Runs20Plus + "," +
+                       Runs40Plus + "," +
+                       Fumbles;
+        }
 
+        public string GetCSVHead()
+        {
+            return "Player,Team,Pos,Yds,Att,Att/G,Avg,Yds/G,TD,Lng,1st,1st%,20+,40+,FUM";
+        }
     }
 }

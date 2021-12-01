@@ -1,7 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using NFLStats.Client.ViewModels;
 using System.Diagnostics;
+using System.Text;
 using NFLStats.Services.Services;
+using NFLStats.Model.Models;
 
 namespace NFLStats.Client.Controllers
 {
@@ -48,6 +50,41 @@ namespace NFLStats.Client.Controllers
 
         }
 
+        [HttpPost]
+        public IActionResult DownloadFullRushingStats(RushingViewModel model)
+        {
+            if (string.IsNullOrEmpty(model.PlayerNameFilter))
+            {
+                model.PlayerNameFilter = "";
+            }
+
+            var records = _statisticsService.GetAllRushingRecords(model.SortBy, model.SortAscending);
+
+            var bytesFromFromCollection = GetCSVfromCollection(records);
+
+            return File(bytesFromFromCollection, "text/csv");
+        }
+
+
+
+        [HttpPost]
+        public IActionResult DownloadPartialRushingStats(RushingViewModel model)
+        {
+            if (string.IsNullOrEmpty(model.PlayerNameFilter))
+            {
+                model.PlayerNameFilter = "";
+            }
+
+            var records = _statisticsService.GetFilteredRushingRecords(model.SortBy, model.PlayerNameFilter, model.SortAscending);
+
+            var bytesFromFromCollection = GetCSVfromCollection(records);
+
+            var fileName = $"NFLRushingStats_2019_SortOn({model.SortBy})_FilteredBy({model.PlayerNameFilter})" + new Guid();
+
+            return File(bytesFromFromCollection, "text/csv", fileName);
+
+        }
+
         public IActionResult Privacy()
         {
             return View();
@@ -63,7 +100,7 @@ namespace NFLStats.Client.Controllers
         {
             var model = new RushingViewModel
             {
-                RushingRecords = _statisticsService.GetRushingRecords(1, "Yards", "")
+                RushingRecords = _statisticsService.GetPagedRushingRecords(1, "Yards", "")
             };
             return model;
         }
@@ -76,9 +113,23 @@ namespace NFLStats.Client.Controllers
                 SortAscending = model.SortAscending,
                 PlayerNameFilter = model.PlayerNameFilter,
                 SortBy = model.SortBy,
-                RushingRecords = _statisticsService.GetRushingRecords(model.PageNumber, model.SortBy, model.PlayerNameFilter, model.SortAscending)
+                RushingRecords = _statisticsService.GetPagedRushingRecords(model.PageNumber, model.SortBy, model.PlayerNameFilter, model.SortAscending)
             };
             return returnModel;
+        }
+
+        private byte[] GetCSVfromCollection<T> (IEnumerable<T>  rushingRecords) where T : IConvertCSV
+        {
+            var sb = new StringBuilder();
+            
+            sb.AppendLine(rushingRecords.FirstOrDefault().GetCSVHead());
+
+            foreach (var record in rushingRecords)
+            {
+                sb.AppendLine(record.ToCSV());
+            }
+
+            return Encoding.UTF8.GetBytes(sb.ToString());
         }
     }
 }
