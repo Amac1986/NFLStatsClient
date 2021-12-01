@@ -10,16 +10,16 @@ EXPOSE 443
 
 FROM mcr.microsoft.com/dotnet/sdk:6.0 AS build
 WORKDIR /src
-COPY ["NFLStatsClient/NFLStatsClient.csproj", "NFLStatsClient/"]
-RUN dotnet restore "NFLStatsClient/NFLStatsClient.csproj"
+COPY ["NFLStatsClient/NFLStats.Client.csproj", "NFLStatsClient/"]
+RUN dotnet restore "NFLStatsClient/NFLStats.Client.csproj"
 COPY . .
 WORKDIR "/src/NFLStatsClient"
-RUN dotnet build "NFLStatsClient.csproj" -c Release -o /app/build
+RUN dotnet build "NFLStats.Client.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "NFLStatsClient.csproj" -c Release -o /app/publish
+RUN dotnet publish "NFLStats.Client.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "NFLStatsClient.dll"]
+ENTRYPOINT ["dotnet", "NFLStats.Client.dll"]
