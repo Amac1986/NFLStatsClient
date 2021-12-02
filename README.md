@@ -54,4 +54,8 @@ We will evaluate you on your ability to solve the problem defined in the require
 If you have any questions regarding requirements, do not hesitate to email your contact at theScore for clarification.
 
 ### Installation and running this solution
-... TODO
+    1. Pre-requisite Docker must be installed. 
+Clone the repo and run the following commands from the directory
+
+
+
