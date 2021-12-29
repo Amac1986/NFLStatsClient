@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace NFLStats.Model.Models
 {
-    public class RushingRecord : IConvertCSV
+    public class RushingRecord : Record
     {
         [Required]
         [JsonProperty(PropertyName = "Player")]
@@ -22,7 +24,7 @@ namespace NFLStats.Model.Models
         [JsonProperty(PropertyName = "Att/G")]
         public float AttemptsPerGame { get; set; }
 
-        [JsonProperty(PropertyName = "Yds")] 
+        [JsonProperty(PropertyName = "Yds")]
         public string Yds { get; set; } = "0";
 
         public int Yards => int.Parse(Yds.Replace(",", ""));
@@ -56,28 +58,24 @@ namespace NFLStats.Model.Models
         [JsonProperty(PropertyName = "FUM")]
         public int Fumbles { get; set; }
 
-        public string ToCSV()
+        public override string GetCSVHead()
         {
-            return PlayerName + "," +
-                       TeamName + "," +
-                       Position + "," +
-                       Yards + "," +
-                       Attempts + "," +
-                       AttemptsPerGame + "," +
-                       AverageYards + "," +
-                       YardsPerGame + "," +
-                       TouchDowns + "," +
-                       Lng + "," +
-                       FirstDowns + "," +
-                       PercentageFirstDowns + "," +
-                       Runs20Plus + "," +
-                       Runs40Plus + "," +
-                       Fumbles;
+            return string.Join(",", GetDisplayedHeadValues());
         }
 
-        public string GetCSVHead()
+        public override string GetHtmlHead()
         {
-            return "Player,Team,Pos,Yds,Att,Att/G,Avg,Yds/G,TD,Lng,1st,1st%,20+,40+,FUM";
+           return BuildHeadHtml(GetDisplayedHeadValues());
+        }
+
+        public override string ToHtml(string element)
+        {
+            return BuildHtml(element);
+        }
+
+        private string[] GetDisplayedHeadValues() 
+        {
+            return new string[] { "Player", "Team", "Pos", "Yds", "Att", "Att/G", "Avg", "Yds/G", "TD", "Lng", "1st", "1st%", "20+", "40+", "FUM" };
         }
     }
 }

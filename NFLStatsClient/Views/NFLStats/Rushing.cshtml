@@ -20,16 +20,4 @@
     </div>
 </div>
 <br/>
-<div id="TableContainer" class="table-responsive">
-    <table class="table table-striped table-bordered ">
-            @{Html.RenderPartialAsync("StatsPartials/_RushingHead");}
-        <tbody class="table-contents">
-            @{Html.RenderPartialAsync("StatsPartials/_RushingTable", Model);}
-        </tbody>
-    </table>
-<div id="tableFooter">
-    <button id="nextPage" type="button" class="btn btn-success">
-            Next Page
-        </button>
-    </div>
-</div>
+@{await Html.RenderPartialAsync("StatsPartials/_StatTable", Model.StatTable);}

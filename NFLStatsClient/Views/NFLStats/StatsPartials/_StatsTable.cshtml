@@ -1,0 +1,30 @@
+﻿@model StatTableViewModel
+<div id="TableContainer" class="table-responsive">
+    <table class="table table-striped table-bordered ">
+        <thead>
+            <tr class="statistics-table">
+                @{
+                    foreach (var record in Model.Records)
+                    {
+                        record.GetHtmlHead();
+                    }
+                }
+            </tr>
+        </thead>
+        <tbody class="table-contents">
+            @{
+                foreach (var record in Model.Records)
+                {
+                    <tr>
+                        @record.ToHtml("td");
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+<div id="tableFooter">
+    <button id="nextPage" type="button" class="btn btn-success">
+            Next Page
+        </button>
+    </div>
+</div>

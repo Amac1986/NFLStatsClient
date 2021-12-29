@@ -62,7 +62,9 @@ namespace NFLStats.Client.Controllers
 
             var bytesFromFromCollection = GetCSVfromCollection(records);
 
-            return File(bytesFromFromCollection, "text/csv");
+            var fileName = $"NFLRushingStats_2019" + new Guid();
+
+            return File(bytesFromFromCollection, "text/csv", fileName);
         }
 
 
@@ -100,7 +102,7 @@ namespace NFLStats.Client.Controllers
         {
             var model = new RushingViewModel
             {
-                RushingRecords = _statisticsService.GetPagedRushingRecords(1, "Yards", "")
+                StatTable = new StatTableViewModel(_statisticsService.GetPagedRushingRecords(1, "Yards", ""))
             };
             return model;
         }
@@ -113,18 +115,19 @@ namespace NFLStats.Client.Controllers
                 SortAscending = model.SortAscending,
                 PlayerNameFilter = model.PlayerNameFilter,
                 SortBy = model.SortBy,
-                RushingRecords = _statisticsService.GetPagedRushingRecords(model.PageNumber, model.SortBy, model.PlayerNameFilter, model.SortAscending)
+                StatTable = new StatTableViewModel(_statisticsService.GetPagedRushingRecords(model.PageNumber, model.SortBy, model.PlayerNameFilter, model.SortAscending))
             };
+
             return returnModel;
         }
 
-        private byte[] GetCSVfromCollection<T> (IEnumerable<T>  rushingRecords) where T : IConvertCSV
+        private byte[] GetCSVfromCollection<T> (IEnumerable<T>  records) where T : IConvert
         {
             var sb = new StringBuilder();
             
-            sb.AppendLine(rushingRecords.FirstOrDefault().GetCSVHead());
+            sb.AppendLine(records.FirstOrDefault().GetCSVHead());
 
-            foreach (var record in rushingRecords)
+            foreach (var record in records)
             {
                 sb.AppendLine(record.ToCSV());
             }

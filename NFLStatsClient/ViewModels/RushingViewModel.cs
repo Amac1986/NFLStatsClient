@@ -12,6 +12,8 @@ namespace NFLStats.Client.ViewModels
 
         public string SortBy { get; set; } = "Yards";
 
-        public List<RushingRecord> RushingRecords { get; set; } = new List<RushingRecord>();
+        public StatTableViewModel StatTable { get; set; }
+
+        //public List<RushingRecord> RushingRecords { get; set; } = new List<RushingRecord>();
     }
 }
