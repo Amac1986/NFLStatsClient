@@ -20,22 +20,9 @@ namespace NFLStats.Client.Controllers
 
         public IActionResult Index()
         {
-            var vm = GetRushStatisticsViewModel();
+            var vm = new RushingViewModel(_statisticsService.GetPagedRushingRecords(1, "Yards", ""));
             return View("Rushing", vm);
         }
-
-        //public IActionResult PassingHome()
-        //{
-        //    var vm = GetRushStatisticsViewModel();
-        //    return View("Passing", vm);
-        //}
-
-        //[HttpPost]
-        //public IActionResult GetPassingStats()
-        //{
-        //    var vm = GetRushStatisticsViewModel(model);
-        //    return PartialView("StatsPartials/_PassingTable", vm);
-        //}
 
         [HttpPost]
         public IActionResult GetRushingStats(RushingViewModel model)
@@ -47,32 +34,17 @@ namespace NFLStats.Client.Controllers
         }
 
         [HttpPost]
-        public IActionResult DownloadFullRushingStats(RushingViewModel model)
+        public IActionResult DownloadRushingStats(RushingViewModel model, bool ignoreFilter = false)
         {
+            if (ignoreFilter) model.PlayerNameFilter = "";
 
-            var records = _statisticsService.GetAllRushingRecords(model.SortBy, model.SortAscending);
-
-            var bytesFromFromCollection = GetCSVfromCollection(records);
-
-            var fileName = $"NFLRushingStats_2019" + new Guid();
-
-            return File(bytesFromFromCollection, "text/csv", fileName);
-        }
-
-
-
-        [HttpPost]
-        public IActionResult DownloadPartialRushingStats(RushingViewModel model)
-        {
-
-            var records = _statisticsService.GetFilteredRushingRecords(model.SortBy, model.PlayerNameFilter, model.SortAscending);
+            var records = _statisticsService.GetRushingRecords(model.SortBy, model.PlayerNameFilter, model.SortAscending);
 
             var bytesFromFromCollection = GetCSVfromCollection(records);
 
             var fileName = $"NFLRushingStats_2019_SortOn({model.SortBy})_FilteredBy({model.PlayerNameFilter})" + new Guid();
 
             return File(bytesFromFromCollection, "text/csv", fileName);
-
         }
 
         public IActionResult Privacy()
@@ -84,29 +56,6 @@ namespace NFLStats.Client.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-        private RushingViewModel GetRushStatisticsViewModel()
-        {
-            var model = new RushingViewModel
-            {
-                StatTable = new StatTableViewModel(_statisticsService.GetPagedRushingRecords(1, "Yards", ""))
-            };
-            return model;
-        }
-
-        private RushingViewModel GetRushStatisticsViewModel(RushingViewModel model)
-        {
-            var returnModel = new RushingViewModel
-            {
-                PageNumber = model.PageNumber,
-                SortAscending = model.SortAscending,
-                PlayerNameFilter = model.PlayerNameFilter,
-                SortBy = model.SortBy,
-                StatTable = new StatTableViewModel(_statisticsService.GetPagedRushingRecords(model.PageNumber, model.SortBy, model.PlayerNameFilter, model.SortAscending))
-            };
-
-            return returnModel;
         }
 
         private byte[] GetCSVfromCollection<T> (IEnumerable<T>  records) where T : Record

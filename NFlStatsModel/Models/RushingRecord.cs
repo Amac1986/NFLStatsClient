@@ -88,7 +88,7 @@ namespace NFLStats.Model.Models
 
         private bool FilterProperty(System.Reflection.PropertyInfo property) 
         {
-            return !(property.Name.Equals("Yards") || property.Name.Equals("LongestRun"));
+            return !(property.Name.Equals("Yds") || property.Name.Equals("LongestRun"));
         }
     }
 }

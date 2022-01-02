@@ -14,8 +14,8 @@
     <div class="input-group-append">
         <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">Download</button>
         <ul class="dropdown-menu dropdown-menu-end">
-            <li><span id="subSet" data-url="@Url.Action("DownloadPartialRushingStats", "NFLStats")" class="dropdown-item">Download</span></li>
-            <li><span id="fullSet" data-url="@Url.Action("DownloadFullRushingStats", "NFLStats")" class="dropdown-item">Download Full Data Set</span></li>
+            <li><span id="subSet" data-url="@Url.Action("DownloadRushingStats", "NFLStats")" class="dropdown-item">Download</span></li>
+            <li><span id="fullSet" data-url="@Url.Action("DownloadRushingStats", "NFLStats", new { ignoreFilter = true} )" class="dropdown-item">Download Full Data Set</span></li>
         </ul>
     </div>
 </div>

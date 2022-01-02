@@ -55,6 +55,17 @@ namespace NFLStats.Tests
             Assert.AreEqual(expectedCsv, actual);
         }
 
+        [TestMethod]
+        public void ToCsv_ReturnsExpectedCsvString_WhenYardsExceed1000()
+        {
+            var record = SingleRecordYards1111();
+            var expectedCsv = ExpectedCsv_Yards1111();
+
+            var actual = record.ToCSV();
+
+            Assert.AreEqual(expectedCsv, actual);
+        }
+
         private static RushingRecord SingleRecord()
         {
             return new RushingRecord()
@@ -67,6 +78,28 @@ namespace NFLStats.Tests
                 AverageYards = 4.8f,
                 YardsPerGame = 9.9f,
                 Yds = "129",
+                TouchDowns = 2,
+                Lng = "19",
+                FirstDowns = 9,
+                PercentageFirstDowns = 33.3f,
+                Runs20Plus = 0,
+                Runs40Plus = 0,
+                Fumbles = 0
+            };
+        }
+
+        private static RushingRecord SingleRecordYards1111()
+        {
+            return new RushingRecord()
+            {
+                PlayerName = "Kenjon Barner",
+                TeamName = "PHI",
+                Position = "RB",
+                Attempts = 27,
+                AttemptsPerGame = 2.1f,
+                AverageYards = 4.8f,
+                YardsPerGame = 9.9f,
+                Yds = "1,111",
                 TouchDowns = 2,
                 Lng = "19",
                 FirstDowns = 9,
@@ -99,6 +132,11 @@ namespace NFLStats.Tests
         private static string ExpectedCsv()
         {
             return "Kenjon Barner,PHI,RB,129,27,2.1,4.8,9.9,2,19,9,33.3,0,0,0";
+        }
+
+        private static string ExpectedCsv_Yards1111()
+        {
+            return "Kenjon Barner,PHI,RB,1111,27,2.1,4.8,9.9,2,19,9,33.3,0,0,0";
         }
     }
 }

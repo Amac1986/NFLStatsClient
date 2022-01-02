@@ -18,8 +18,8 @@ namespace NFLStats.Model.Models
         //public const string WideReceiver = "WR";
         //public const string TightEnd = "TE";
         //public const string OffensiveTackle = "OE";
-        //public const string OffensiveGuard = "OE";
-        //public const string Centre = "OE";
+        //public const string OffensiveGuard = "OG";
+        //public const string Centre = "C";
 
         ////Defense
         //public const string DefensiveEnd = "DE";

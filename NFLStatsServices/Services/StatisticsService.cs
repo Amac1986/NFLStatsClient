@@ -31,20 +31,11 @@ namespace NFLStats.Services.Services
                 .ToList();
         }
 
-        public List<RushingRecord> GetAllRushingRecords(string sortBy, bool ascending = false)
+        public List<RushingRecord> GetRushingRecords(string sortBy, string playerFilter, bool ascending = false)
         {
+            playerFilter = playerFilter ?? "";
+
             var rushingRecords = _dataStore.GetRushingRecords();
-
-            return rushingRecords
-                .SortRecords(sortBy, ascending)
-                .ToList();
-        }
-
-        public List<RushingRecord> GetFilteredRushingRecords(string sortBy, string playerFilter, bool ascending = false)
-        {
-            var rushingRecords = _dataStore.GetRushingRecords();
-
-            var pageSize = int.Parse(_configuration["ViewSettings:PageSize"]);
 
             return rushingRecords
                 .Where(r => r.PlayerName.ToLowerInvariant().Contains(playerFilter.ToLowerInvariant()))
