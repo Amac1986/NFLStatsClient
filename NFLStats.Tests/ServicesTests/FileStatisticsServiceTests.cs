@@ -3,7 +3,7 @@
 namespace NFLStats.Tests.ServicesTests
 {    
     [TestClass]
-    public class FileStatisticsServiceTests
+    public class StatisticsServiceTests
     {
 
     }

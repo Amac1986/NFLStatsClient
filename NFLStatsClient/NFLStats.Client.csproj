@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NFLStats.Persistence\NFLStats.Persistence.csproj" />
     <ProjectReference Include="..\NFlStatsModel\NFLStats.Model.csproj" />
     <ProjectReference Include="..\NFLStatsServices\NFLStats.Services.csproj" />
   </ItemGroup>

@@ -40,10 +40,6 @@ namespace NFLStats.Client.Controllers
         [HttpPost]
         public IActionResult GetRushingStats(RushingViewModel model)
         {
-            if (string.IsNullOrEmpty(model.PlayerNameFilter))
-            {
-                model.PlayerNameFilter = "";
-            }
 
             var records = _statisticsService.GetPagedRushingRecords(model.PageNumber, model.SortBy, model.PlayerNameFilter, model.SortAscending);
             return PartialView("StatsPartials/_StatsTableData", records);
@@ -53,10 +49,6 @@ namespace NFLStats.Client.Controllers
         [HttpPost]
         public IActionResult DownloadFullRushingStats(RushingViewModel model)
         {
-            if (string.IsNullOrEmpty(model.PlayerNameFilter))
-            {
-                model.PlayerNameFilter = "";
-            }
 
             var records = _statisticsService.GetAllRushingRecords(model.SortBy, model.SortAscending);
 
@@ -72,10 +64,6 @@ namespace NFLStats.Client.Controllers
         [HttpPost]
         public IActionResult DownloadPartialRushingStats(RushingViewModel model)
         {
-            if (string.IsNullOrEmpty(model.PlayerNameFilter))
-            {
-                model.PlayerNameFilter = "";
-            }
 
             var records = _statisticsService.GetFilteredRushingRecords(model.SortBy, model.PlayerNameFilter, model.SortAscending);
 
