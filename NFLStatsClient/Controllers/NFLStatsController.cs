@@ -2,7 +2,7 @@
 using NFLStats.Client.ViewModels;
 using System.Diagnostics;
 using System.Text;
-using NFLStats.Services.Services;
+using NFLStats.Services.Interfaces;
 using NFLStats.Model.Models;
 
 namespace NFLStats.Client.Controllers
@@ -45,8 +45,8 @@ namespace NFLStats.Client.Controllers
                 model.PlayerNameFilter = "";
             }
 
-            var vm = GetRushStatisticsViewModel(model);
-            return PartialView("StatsPartials/_RushingTable", vm);
+            var records = _statisticsService.GetPagedRushingRecords(model.PageNumber, model.SortBy, model.PlayerNameFilter, model.SortAscending);
+            return PartialView("StatsPartials/_StatsTableData", records);
 
         }
 
@@ -121,7 +121,7 @@ namespace NFLStats.Client.Controllers
             return returnModel;
         }
 
-        private byte[] GetCSVfromCollection<T> (IEnumerable<T>  records) where T : IConvert
+        private byte[] GetCSVfromCollection<T> (IEnumerable<T>  records) where T : Record
         {
             var sb = new StringBuilder();
             

@@ -1,26 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using NFLStats.Model.Models;
+﻿using NFLStats.Model.Models;
 using Newtonsoft.Json;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Caching.Memory;
 using NFLStats.Services.Helpers;
+using NFLStats.Services.Interfaces;
 
 namespace NFLStats.Services.Services
 {
-    public interface IStatisticsService
-    {
-        List<RushingRecord> GetPagedRushingRecords(int pageNumber, string sortBy, string playerFilter, bool ascending = false);
-
-        List<RushingRecord> GetAllRushingRecords(string sortBy, bool ascending = false);
-
-        List<RushingRecord> GetFilteredRushingRecords(string sortBy, string playerFilter, bool ascending = false);
-    }
 
     public class FileStatisticsService : IStatisticsService
     {

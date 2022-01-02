@@ -4,10 +4,10 @@ namespace NFLStats.Client.ViewModels
 {
     public class StatTableViewModel
     {
-        public StatTableViewModel(List<Record> records)
+        public StatTableViewModel(IEnumerable<Record> records)
         {
             Records = records;
         }
-        public List<Record> Records { get; set; }
+        public IEnumerable<Record> Records { get; set; }
     }
 }

@@ -1,7 +1,7 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
 using NFLStats.Client.ViewModels;
-using NFLStats.Services.Services;
+using NFLStats.Services.Interfaces;
 
 namespace NFLStats.Tests
 {
