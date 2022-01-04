@@ -14,7 +14,7 @@ namespace NFLStats.Tests
             var vm = new RushingViewModel() {
                 
             };
-            var mockService = new Mock<IStatisticsService>();
+            IStatisticsService mockService = Mock.Of<IStatisticsService>();
             //mockService.Setup(x => x.GetPagedRushingRecords(0, "", "", false)).Returns(GetFilteredCollection());
             Assert.Inconclusive();
         }

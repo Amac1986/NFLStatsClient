@@ -25,10 +25,53 @@ public class StatisticsServiceTests
 
         var records = sut.GetPagedRushingRecords(pageNumber, sortBy, playerFilter);
 
-        Assert.IsTrue(records.Any());
         Assert.AreEqual(10, records.Count());
         Assert.IsTrue(records.First().PlayerName.Equals("Mark Ingram"));
+        Assert.IsTrue(records.Last().PlayerName.Equals("Brett Hundley"));
+        Assert.IsFalse(records.Any(r => r.PlayerName == "Reggie Bush"));
+    }
 
+    [TestMethod]
+    public void GetPagedRushingRecords_ReturnsRemainder_OnFinalPage()
+    {
+        var sut = CreateBasicSUT();
+        var pageNumber = 2;
+        var sortBy = "Yards";
+        var playerFilter = "";
+
+        var records = sut.GetPagedRushingRecords(pageNumber, sortBy, playerFilter);
+
+        Assert.AreEqual(1, records.Count());
+        Assert.IsTrue(records.First().PlayerName.Equals("Reggie Bush"));
+        Assert.IsTrue(records.Last().PlayerName.Equals("Reggie Bush"));
+    }
+
+    [TestMethod]
+    public void GetPagedRushingRecords_ReturnsEmptySet_WhenPageExceedsRange()
+    {
+        var sut = CreateBasicSUT();
+        var pageNumber = 3;
+        var sortBy = "Yards";
+        var playerFilter = "";
+
+        var records = sut.GetPagedRushingRecords(pageNumber, sortBy, playerFilter);
+
+        Assert.AreEqual(0, records.Count());
+        Assert.IsFalse(records.Any());
+    }
+
+    [TestMethod]
+    public void GetRushingRecords_ReturnsRecordsSortedByYards_WhenArgumentsValid()
+    {
+        var sut = CreateBasicSUT();
+        var sortBy = "Yards";
+        var playerFilter = "";
+
+        var records = sut.GetRushingRecords(sortBy, playerFilter);
+
+        Assert.AreEqual(11, records.Count());
+        Assert.IsTrue(records.First().PlayerName.Equals("Mark Ingram"));
+        Assert.IsTrue(records.Last().PlayerName.Equals("Reggie Bush"));
     }
 
     private StatisticsService CreateBasicSUT() 
@@ -43,197 +86,198 @@ public class StatisticsServiceTests
         return new StatisticsService(configuration, dataStore);
     }
 
-    private IEnumerable<RushingRecord> GetCollectionRushingRecords()
+    internal static IEnumerable<RushingRecord> GetCollectionRushingRecords()
     {
 
         return new List<RushingRecord>() {
             new RushingRecord() {
-            PlayerName="Joe Banyard",
-            Team="JAX",
-            Position="RB",
-            Attempts=2,
-            AttemptsPerGame=2,
-            Yds=7,
-            AverageYards=3.5,
-            YardsPerGame=7,
-            TouchDowns=0,
-            Lng="7",
-            FirstDowns=0,
-            PercentageFirstDowns=0,
-            Runs20Plus+=0,
-            Runs40Plus+=0,
-            Fumbles=0
+                PlayerName="Joe Banyard",
+                TeamName="JAX",
+                Position="RB",
+                Attempts=2,
+                AttemptsPerGame=2f,
+                Yds="7",
+                AverageYards=3.5f,
+                YardsPerGame=7f,
+                TouchDowns=0,
+                Lng="7",
+                FirstDowns=0,
+                PercentageFirstDowns=0f,
+                Runs20Plus=0,
+                Runs40Plus=0,
+                Fumbles=0
             },
             new RushingRecord() {
-            PlayerName="Shaun Hill",
-            TeamName="MIN",
-            Position="QB",
-            Attempts=5,
-            AttemptsPerGame=1.7,
-            Yds=5,
-            AverageYards=1,
-            YardsPerGame=1.7,
-            TouchDowns=0,
-            Lng="9",
-            FirstDowns=0,
-            PercentageFirstDowns=0,
-            Runs20Plus+=0,
-            Runs40Plus+=0,
-            Fumbles=0
+                PlayerName="Shaun Hill",
+                TeamName="MIN",
+                Position="QB",
+                Attempts=5,
+                AttemptsPerGame=1.7f,
+                Yds="5",
+                AverageYards=1f,
+                YardsPerGame=1.7f,
+                TouchDowns=0,
+                Lng="9",
+                FirstDowns=0,
+                PercentageFirstDowns=0f,
+                Runs20Plus=0,
+                Runs40Plus=0,
+                Fumbles=0
             },
             new RushingRecord() {
-            PlayerName="Breshad Perriman",
-            Team="BAL",
-            Position="WR",
-            Attempts=1,
-            AttemptsPerGame=0.1,
-            Yds=2,
-            AverageYards=2,
-            YardsPerGame=0.1,
-            TouchDowns=0,
-            Lng="2",
-            FirstDowns=0,
-            PercentageFirstDowns=0,
-            Runs20Plus+=0,
-            Runs40Plus+=0,
-            Fumbles=0
+                PlayerName="Breshad Perriman",
+                TeamName="BAL",
+                Position="WR",
+                Attempts=1,
+                AttemptsPerGame=0.1f,
+                Yds="2",
+                AverageYards=2f,
+                YardsPerGame=0.1f,
+                TouchDowns=0,
+                Lng="2",
+                FirstDowns=0,
+                PercentageFirstDowns=0f,
+                Runs20Plus=0,
+                Runs40Plus=0,
+                Fumbles=0
             },
             new RushingRecord() {
-            PlayerName="Charlie Whitehurst",
-            Team="CLE",
-            Position="QB",
-            Attempts=2,
-            AttemptsPerGame=2,
-            Yds=1,
-            AverageYards=0.5,
-            YardsPerGame=1,
-            TouchDowns=0,
-            Lng="2",
-            FirstDowns=0,
-            PercentageFirstDowns=0,
-            Runs20Plus+=0,
-            Runs40Plus+=0,
-            Fumbles=0
+                PlayerName="Charlie Whitehurst",
+                TeamName="CLE",
+                Position="QB",
+                Attempts=2,
+                AttemptsPerGame=2f,
+                Yds="1",
+                AverageYards=0.5f,
+                YardsPerGame=1f,
+                TouchDowns=0,
+                Lng="2",
+                FirstDowns=0,
+                PercentageFirstDowns=0f,
+                Runs20Plus=0,
+                Runs40Plus=0,
+                Fumbles=0
             },
             new RushingRecord() {
-            PlayerName="Lance Dunbar",
-            Team="DAL",
-            Position="RB",
-            Attempts=9,
-            AttemptsPerGame=0.7,
-            Yds=31,
-            AverageYards=3.4,
-            YardsPerGame=2.4,
-            TouchDowns=1,
-            Lng="10",
-            FirstDowns=3,
-            PercentageFirstDowns=33.3,
-            Runs20Plus+=0,
-            Runs40Plus+=0,
-            Fumbles=0
+                PlayerName="Lance Dunbar",
+                TeamName="DAL",
+                Position="RB",
+                Attempts=9,
+                AttemptsPerGame=0.7f,
+                Yds="31",
+                AverageYards=3.4f,
+                YardsPerGame=2.4f,
+                TouchDowns=1,
+                Lng="10",
+                FirstDowns=3,
+                PercentageFirstDowns=33.3f,
+                Runs20Plus=0,
+                Runs40Plus=0,
+                Fumbles=0
             },
             new RushingRecord() {
-            PlayerName="Mark Ingram",
-            Team="NO",
-            Position="RB",
-            Attempts=Runs20Plus5,
-            AttemptsPerGame=12.8,
-            Yds="1,043",
-            AverageYards=5.1,
-            YardsPerGame=65.2,
-            TouchDowns=6,
-            Lng="75T",
-            FirstDowns=49,
-            PercentageFirstDowns=23.9,
-            Runs20Plus+=4,
-            Runs40Plus+=2,
-            Fumbles=2
+                PlayerName="Mark Ingram",
+                TeamName="NO",
+                Position="RB",
+                Attempts=205,
+                AttemptsPerGame=12.8f,
+                Yds="1,043",
+                AverageYards=5.1f,
+                YardsPerGame=65.2f,
+                TouchDowns=6,
+                Lng="75T",
+                FirstDowns=49,
+                PercentageFirstDowns=23.9f,
+                Runs20Plus=4,
+                Runs40Plus=2,
+                Fumbles=2
             },
             new RushingRecord() {
-            PlayerName="Reggie Bush",
-            Team="BUF",
-            Position="RB",
-            Attempts=12,
-            AttemptsPerGame=0.9,
-            Yds=-3,
-            AverageYards=-0.3,
-            YardsPerGame=-0.2,
-            TouchDowns=1,
-            Lng=5,
-            FirstDowns=2,
-            PercentageFirstDowns=16.7,
-            Runs20Plus+=0,
-            Runs40Plus+=0,
-            Fumbles=1
+                PlayerName="Reggie Bush",
+                TeamName="BUF",
+                Position="RB",
+                Attempts=12,
+                AttemptsPerGame=0.9f,
+                Yds="-3",
+                AverageYards=-0.3f,
+                YardsPerGame=-0.2f,
+                TouchDowns=1,
+                Lng="5",
+                FirstDowns=2,
+                PercentageFirstDowns=16.7f,
+                Runs20Plus=0,
+                Runs40Plus=0,
+                Fumbles=1
             },
             new RushingRecord() {
-            PlayerName="Lucky Whitehead",
-            Team="DAL",
-            Position="WR",
-            Attempts=10,
-            AttemptsPerGame=0.7,
-            Yds=82,
-            AverageYards=8.2,
-            YardsPerGame=5.5,
-            TouchDowns=0,
-            Lng="26",
-            FirstDowns=4,
-            PercentageFirstDowns=Runs40Plus,
-            Runs20Plus+=1,
-            Runs40Plus+=0,
-            Fumbles=1
+                PlayerName="Lucky Whitehead",
+                TeamName="DAL",
+                Position="WR",
+                Attempts=10,
+                AttemptsPerGame=0.7f,
+                Yds="82",
+                AverageYards=8.2f,
+                YardsPerGame=5.5f,
+                TouchDowns=0,
+                Lng="26",
+                FirstDowns=4,
+                PercentageFirstDowns=40f,
+                Runs20Plus=1,
+                Runs40Plus=0,
+                Fumbles=1
             },
             new RushingRecord() {
-            PlayerName="Brett Hundley",
-            Team="GB",
-            Position="QB",
-            Attempts=3,
-            AttemptsPerGame=0.8,
-            Yds=-2,
-            AverageYards=-0.7,
-            YardsPerGame=-0.5,
-            TouchDowns=0,
-            Lng=0,
-            FirstDowns=0,
-            PercentageFirstDowns=0,
-            Runs20Plus+=0,
-            Runs40Plus+=0,
-            Fumbles=1
+                PlayerName="Brett Hundley",
+                TeamName="GB",
+                Position="QB",
+                Attempts=3,
+                AttemptsPerGame=0.8f,
+                Yds="-2",
+                AverageYards=-0.7f,
+                YardsPerGame=-0.5f,
+                TouchDowns=0,
+                Lng="0",
+                FirstDowns=0,
+                PercentageFirstDowns=0f,
+                Runs20Plus=0,
+                Runs40Plus=0,
+                Fumbles=1
             },
             new RushingRecord() {
-            PlayerName="Tyreek Hill",
-            Team="KC",
-            Position="WR",
-            Attempts=24,
-            AttemptsPerGame=1.5,
-            Yds=267,
-            AverageYards=11.1,
-            YardsPerGame=16.7,
-            TouchDowns=3,
-            Lng="70T",
-            FirstDowns=10,
-            PercentageFirstDowns=41.7,
-            Runs20Plus+=4,
-            Runs40Plus+=2,
-            Fumbles=0
+                PlayerName="Tyreek Hill",
+                TeamName="KC",
+                Position="WR",
+                Attempts=24,
+                AttemptsPerGame=1.5f,
+                Yds="267",
+                AverageYards=11.1f,
+                YardsPerGame=16.7f,
+                TouchDowns=3,
+                Lng="70T",
+                FirstDowns=10,
+                PercentageFirstDowns=41.7f,
+                Runs20Plus=4,
+                Runs40Plus=2,
+                Fumbles=0
             },
             new RushingRecord() {
-            PlayerName="Randall Cobb",
-            Team="GB",
-            Position="WR",
-            Attempts=10,
-            AttemptsPerGame=0.8,
-            Yds=33,
-            AverageYards=3.3,
-            YardsPerGame=2.5,
-            TouchDowns=0,
-            Lng="14",
-            FirstDowns=4,
-            PercentageFirstDowns=Runs40Plus,
-            Runs20Plus+=0,
-            Runs40Plus+=0,
-            Fumbles=0
+                PlayerName="Randall Cobb",
+                TeamName="GB",
+                Position="WR",
+                Attempts=10,
+                AttemptsPerGame=0.8f,
+                Yds="33",
+                AverageYards=3.3f,
+                YardsPerGame=2.5f,
+                TouchDowns=0,
+                Lng="14",
+                FirstDowns=4,
+                PercentageFirstDowns=40f,
+                Runs20Plus=0,
+                Runs40Plus=0,
+                Fumbles=0
             }
         };
+
     }
 }
