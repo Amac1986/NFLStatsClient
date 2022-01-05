@@ -4,6 +4,16 @@ namespace NFLStats.Client.ViewModels
 {
     public class RushingViewModel
     {
+        public RushingViewModel(IEnumerable<Record> records) 
+        {
+            StatTable = new StatTableViewModel(records);
+        }
+
+        public RushingViewModel()
+        {
+            StatTable = new StatTableViewModel(new List<RushingRecord>());
+        }
+
         public int PageNumber { get; set; } = 1;
 
         public bool SortAscending { get; set; } = false;
@@ -12,6 +22,6 @@ namespace NFLStats.Client.ViewModels
 
         public string SortBy { get; set; } = "Yards";
 
-        public List<RushingRecord> RushingRecords { get; set; } = new List<RushingRecord>();
+        public StatTableViewModel StatTable { get; set; }
     }
 }

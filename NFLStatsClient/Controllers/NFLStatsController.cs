@@ -2,7 +2,7 @@
 using NFLStats.Client.ViewModels;
 using System.Diagnostics;
 using System.Text;
-using NFLStats.Services.Services;
+using NFLStats.Services.Interfaces;
 using NFLStats.Model.Models;
 
 namespace NFLStats.Client.Controllers
@@ -20,69 +20,31 @@ namespace NFLStats.Client.Controllers
 
         public IActionResult Index()
         {
-            var vm = GetRushStatisticsViewModel();
+            var vm = new RushingViewModel(_statisticsService.GetPagedRushingRecords(1, "Yards", ""));
             return View("Rushing", vm);
         }
-
-        //public IActionResult PassingHome()
-        //{
-        //    var vm = GetRushStatisticsViewModel();
-        //    return View("Passing", vm);
-        //}
-
-        //[HttpPost]
-        //public IActionResult GetPassingStats()
-        //{
-        //    var vm = GetRushStatisticsViewModel(model);
-        //    return PartialView("StatsPartials/_PassingTable", vm);
-        //}
 
         [HttpPost]
         public IActionResult GetRushingStats(RushingViewModel model)
         {
-            if (string.IsNullOrEmpty(model.PlayerNameFilter))
-            {
-                model.PlayerNameFilter = "";
-            }
 
-            var vm = GetRushStatisticsViewModel(model);
-            return PartialView("StatsPartials/_RushingTable", vm);
+            var records = _statisticsService.GetPagedRushingRecords(model.PageNumber, model.SortBy, model.PlayerNameFilter, model.SortAscending);
+            return PartialView("StatsPartials/_StatsTableData", records);
 
         }
 
         [HttpPost]
-        public IActionResult DownloadFullRushingStats(RushingViewModel model)
+        public IActionResult DownloadRushingStats(RushingViewModel model, bool ignoreFilter = false)
         {
-            if (string.IsNullOrEmpty(model.PlayerNameFilter))
-            {
-                model.PlayerNameFilter = "";
-            }
+            if (ignoreFilter) model.PlayerNameFilter = "";
 
-            var records = _statisticsService.GetAllRushingRecords(model.SortBy, model.SortAscending);
-
-            var bytesFromFromCollection = GetCSVfromCollection(records);
-
-            return File(bytesFromFromCollection, "text/csv");
-        }
-
-
-
-        [HttpPost]
-        public IActionResult DownloadPartialRushingStats(RushingViewModel model)
-        {
-            if (string.IsNullOrEmpty(model.PlayerNameFilter))
-            {
-                model.PlayerNameFilter = "";
-            }
-
-            var records = _statisticsService.GetFilteredRushingRecords(model.SortBy, model.PlayerNameFilter, model.SortAscending);
+            var records = _statisticsService.GetRushingRecords(model.SortBy, model.PlayerNameFilter, model.SortAscending);
 
             var bytesFromFromCollection = GetCSVfromCollection(records);
 
             var fileName = $"NFLRushingStats_2019_SortOn({model.SortBy})_FilteredBy({model.PlayerNameFilter})" + new Guid();
 
             return File(bytesFromFromCollection, "text/csv", fileName);
-
         }
 
         public IActionResult Privacy()
@@ -96,35 +58,13 @@ namespace NFLStats.Client.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        private RushingViewModel GetRushStatisticsViewModel()
-        {
-            var model = new RushingViewModel
-            {
-                RushingRecords = _statisticsService.GetPagedRushingRecords(1, "Yards", "")
-            };
-            return model;
-        }
-
-        private RushingViewModel GetRushStatisticsViewModel(RushingViewModel model)
-        {
-            var returnModel = new RushingViewModel
-            {
-                PageNumber = model.PageNumber,
-                SortAscending = model.SortAscending,
-                PlayerNameFilter = model.PlayerNameFilter,
-                SortBy = model.SortBy,
-                RushingRecords = _statisticsService.GetPagedRushingRecords(model.PageNumber, model.SortBy, model.PlayerNameFilter, model.SortAscending)
-            };
-            return returnModel;
-        }
-
-        private byte[] GetCSVfromCollection<T> (IEnumerable<T>  rushingRecords) where T : IConvertCSV
+        private byte[] GetCSVfromCollection<T> (IEnumerable<T>  records) where T : Record
         {
             var sb = new StringBuilder();
             
-            sb.AppendLine(rushingRecords.FirstOrDefault().GetCSVHead());
+            sb.AppendLine(records.FirstOrDefault().GetCSVHead());
 
-            foreach (var record in rushingRecords)
+            foreach (var record in records)
             {
                 sb.AppendLine(record.ToCSV());
             }

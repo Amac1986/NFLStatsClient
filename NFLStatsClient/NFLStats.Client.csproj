@@ -8,12 +8,14 @@
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'NFLStatsClient' " />
 	<ItemGroup>
     <PackageReference Include="jquery.datatables" Version="1.10.15" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\NFLStats.Persistence\NFLStats.Persistence.csproj" />
     <ProjectReference Include="..\NFlStatsModel\NFLStats.Model.csproj" />
     <ProjectReference Include="..\NFLStatsServices\NFLStats.Services.csproj" />
   </ItemGroup>

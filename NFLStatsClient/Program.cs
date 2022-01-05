@@ -1,11 +1,14 @@
 using NFLStats.Services.Services;
+using NFLStats.Services.Interfaces;
+using NFLStats.Persistence;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
 
-builder.Services.AddScoped<IStatisticsService, FileStatisticsService>();
+builder.Services.AddScoped<IStatisticsService, StatisticsService>();
+builder.Services.AddSingleton<IDataStore, FileDataStore>();
 
 var app = builder.Build();
 

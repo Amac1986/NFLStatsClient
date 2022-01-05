@@ -1,0 +1,9 @@
+﻿@model IEnumerable<Record>
+@{
+    foreach (var record in Model)
+    {
+        <tr>
+            @Html.Raw(record.ToHtml("td"))
+        </tr>
+    }
+}

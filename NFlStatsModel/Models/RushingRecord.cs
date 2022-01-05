@@ -1,9 +1,11 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Linq;
+using System.Text;
 using Newtonsoft.Json;
 
 namespace NFLStats.Model.Models
 {
-    public class RushingRecord : IConvertCSV
+    public class RushingRecord : Record
     {
         [Required]
         [JsonProperty(PropertyName = "Player")]
@@ -16,16 +18,17 @@ namespace NFLStats.Model.Models
         [Required]
         [JsonProperty(PropertyName = "Pos")]
         public string Position { get; set; } = "";
+
+        [JsonProperty(PropertyName = "Yds")]
+        public string Yds { get; set; } = "0";
+
+        public int Yards => int.Parse(Yds.Replace(",", ""));
+
         [JsonProperty(PropertyName = "Att")]
         public int Attempts { get; set; }
 
         [JsonProperty(PropertyName = "Att/G")]
         public float AttemptsPerGame { get; set; }
-
-        [JsonProperty(PropertyName = "Yds")] 
-        public string Yds { get; set; } = "0";
-
-        public int Yards => int.Parse(Yds.Replace(",", ""));
 
         [JsonProperty(PropertyName = "Avg")]
         public float AverageYards { get; set; }
@@ -56,28 +59,36 @@ namespace NFLStats.Model.Models
         [JsonProperty(PropertyName = "FUM")]
         public int Fumbles { get; set; }
 
-        public string ToCSV()
+        public override string GetCSVHead()
         {
-            return PlayerName + "," +
-                       TeamName + "," +
-                       Position + "," +
-                       Yards + "," +
-                       Attempts + "," +
-                       AttemptsPerGame + "," +
-                       AverageYards + "," +
-                       YardsPerGame + "," +
-                       TouchDowns + "," +
-                       Lng + "," +
-                       FirstDowns + "," +
-                       PercentageFirstDowns + "," +
-                       Runs20Plus + "," +
-                       Runs40Plus + "," +
-                       Fumbles;
+            return string.Join(",", GetDisplayedHeadValues());
         }
 
-        public string GetCSVHead()
+        public override string GetHtmlHead()
         {
-            return "Player,Team,Pos,Yds,Att,Att/G,Avg,Yds/G,TD,Lng,1st,1st%,20+,40+,FUM";
+             var html = BuildHeadHtml(GetDisplayedHeadValues(), FilterProperty);
+            return html.Replace("\"Lng\"", "\"LongestRun\"").Replace("\"Yds\"", "\"Yards\"");
+            
+        }
+
+        public override string ToHtml(string element)
+        {
+            return BuildHtml(element, FilterProperty);
+        }
+
+        private string[] GetDisplayedHeadValues() 
+        {
+            return new string[] { "Player", "Team", "Pos", "Yds", "Att", "Att/G", "Avg", "Yds/G", "TD", "Lng", "1st", "1st%", "20+", "40+", "FUM" };
+        }
+
+        public override string ToCSV()
+        {
+            return string.Join(",", GetType().GetProperties().Where(FilterProperty).Select(p => p.GetValue(this)).ToArray());
+        }
+
+        private bool FilterProperty(System.Reflection.PropertyInfo property) 
+        {
+            return !(property.Name.Equals("Yds") || property.Name.Equals("LongestRun"));
         }
     }
 }
