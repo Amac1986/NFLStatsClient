@@ -46,12 +46,12 @@ namespace NFLStats.Persistence
                     .Select(r => r.ToRush())
                     .Select(r => 
                     {
-                        r.Player.Team = _context.Teams.Where(cr => cr.Name == r.Player.Team.Name).FirstOrDefault();
+                        r.Player.Team = _context.Teams.FirstOrDefault(cr => cr.Name == r.Player.Team.Name);
                         return r; 
                     })
                     .Select(r =>
                     {
-                        r.Player.Position = _context.Positions.Where(cr => cr.PostionCode == r.Player.Position.PostionCode).FirstOrDefault();
+                        r.Player.Position = _context.Positions.FirstOrDefault(cr => cr.PostionCode == r.Player.Position.PostionCode);
                         return r;
                     });
 
@@ -65,21 +65,21 @@ namespace NFLStats.Persistence
                 .Include(r => r.Player)
                 .Include(r => r.Player.Position)
                 .Include(r => r.Player.Team)
-                .Where(r => r.Player.Name.ToLowerInvariant().Contains(playerFilter.ToLowerInvariant()))
-                .SortRecords(sortBy, ascending)
-                .Select(r => r.ToRushingRecord());
+                .Where(r => r.Player.Name.ToLower().Contains(playerFilter.ToLower()))
+                .Select(r => r.ToRushingRecord())
+                .SortRecords(sortBy, ascending);
         }
 
         public IEnumerable<RushingRecord> GetPagedRushingRecords(int pageNumber, int pageSize, string sortBy, string playerFilter, bool ascending = false) 
         {
-            return _context.Rushing
-                .Include(r => r.Player)
-                .Include(r => r.Player.Position)
-                .Include(r => r.Player.Team)
-                .Where(r => r.Player.Name.ToLowerInvariant().Contains(playerFilter.ToLowerInvariant()))
-                .SortRecords(sortBy, ascending)
-                .PageRecords(pageSize, pageNumber)
-                .Select(r => r.ToRushingRecord());
+                return _context.Rushing
+                    .Include(r => r.Player)
+                    .Include(r => r.Player.Position)
+                    .Include(r => r.Player.Team)
+                    .Where(r => r.Player.Name.ToLower().Contains(playerFilter.ToLower()))
+                    .Select(r => r.ToRushingRecord())
+                    .SortRecords(sortBy, ascending)
+                    .PageRecords(pageSize, pageNumber);
         }
     }
 }

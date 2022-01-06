@@ -9,13 +9,11 @@ namespace NFLStats.Client.Controllers
 {
     public class NFLStatsController : Controller
     {
-        private readonly ILogger<NFLStatsController> _logger;
         private readonly IStatisticsService _statisticsService;
 
-        public NFLStatsController(ILogger<NFLStatsController> logger, IStatisticsService statisticsService)
+        public NFLStatsController(IStatisticsService statisticsService)
         {
             _statisticsService = statisticsService;
-            _logger = logger;
         }
 
         public IActionResult Index()
