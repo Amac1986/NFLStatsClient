@@ -10,7 +10,6 @@ namespace NFLStats.Model.Models
     {
         public int Id { get; set; }
         public string PostionCode { get; set; }
-        public string PositionName { get; set; }
 
         //Offense
         //public const string RunningBack = "RB";

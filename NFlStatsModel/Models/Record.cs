@@ -17,7 +17,9 @@ namespace NFLStats.Model.Models
 
         public string BuildHeadHtml(string[] displayNames, Func<System.Reflection.PropertyInfo, bool> propertyFilter) {
 
-            var PropertyNames = GetType().GetProperties().Where(p => propertyFilter.Invoke(p)).Select(p => p.Name);
+            var PropertyNames = GetType().GetProperties().Where(p => propertyFilter.Invoke(p))
+                .OrderBy(x => x.MetadataToken)                                         
+                .Select(p => p.Name);
             var combined = PropertyNames.Select((pn, index) => new { Name = pn, Display = displayNames[index] });
 
             return string.Join("", combined.Select(c => $"<th data-column-name=\"{c.Name}\">{c.Display}</th>").ToArray());
@@ -25,7 +27,9 @@ namespace NFLStats.Model.Models
 
         public string BuildHtml(string element, Func<System.Reflection.PropertyInfo, bool> propertyFilter)
         {
-            return string.Join("", GetType().GetProperties().Where(p => propertyFilter.Invoke(p))
+            return string.Join("", GetType().GetProperties()
+                .Where(p => propertyFilter.Invoke(p))
+                .OrderBy(x => x.MetadataToken)
                 .Select(p => p.GetValue(this))
                 .Select(v => $"<{element}>{v}</{element}>")
                 .ToArray());

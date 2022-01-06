@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;
 using NFLStats.Model.Models;
+using NFLStats.Services.Helpers;
 using NFLStats.Services.Interfaces;
 
 namespace NFLStats.Persistence
@@ -17,7 +18,24 @@ namespace NFLStats.Persistence
             _memoryCache = memoryCache;
         }    
 
-        public IEnumerable<RushingRecord> GetRushingRecords()
+        public IEnumerable<RushingRecord> GetRushingRecords(string sortBy, string playerFilter, bool ascending = false)
+        {
+            return LoadRecords()
+                .Where(r => r.PlayerName.ToLowerInvariant().Contains(playerFilter.ToLowerInvariant()))
+                .SortRecords(sortBy, ascending)
+                .ToList();
+        }
+
+        public IEnumerable<RushingRecord> GetPagedRushingRecords(int pageNumber, int pageSize, string sortBy, string playerFilter, bool ascending = false) 
+        {
+            return LoadRecords()
+                .Where(r => r.PlayerName.ToLowerInvariant().Contains(playerFilter.ToLowerInvariant()))
+                .SortRecords(sortBy, ascending)
+                .PageRecords(pageSize, pageNumber)
+                .ToList();
+        }
+
+        private IEnumerable<RushingRecord> LoadRecords() 
         {
             if (!_memoryCache.TryGetValue("RushingRecords", out IEnumerable<RushingRecord> records))
             {
@@ -31,6 +49,6 @@ namespace NFLStats.Persistence
             }
 
             return records;
-        }
+        } 
     }
 }

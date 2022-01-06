@@ -1,6 +1,7 @@
 using NFLStats.Services.Services;
 using NFLStats.Services.Interfaces;
 using NFLStats.Persistence;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,7 +9,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 builder.Services.AddScoped<IStatisticsService, StatisticsService>();
-builder.Services.AddSingleton<IDataStore, FileDataStore>();
+builder.Services.AddScoped<IDataStore, SQLiteDataStore>();
+builder.Services.AddScoped<StatisticsContext>();
 
 var app = builder.Build();
 

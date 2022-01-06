@@ -17,10 +17,10 @@ public class StatisticsServiceTests
     [TestMethod]
     public void GetPagedRushingRecords_ReturnsRecordsSortedByYards_WhenArgumentsValid() 
     {
-        var sut = CreateBasicSUT();
         var pageNumber = 1;
         var sortBy = "Yards";
         var playerFilter = "";
+        var sut = CreateBasicSUT(sortBy, playerFilter, pageNumber);
 
 
         var records = sut.GetPagedRushingRecords(pageNumber, sortBy, playerFilter);
@@ -34,10 +34,11 @@ public class StatisticsServiceTests
     [TestMethod]
     public void GetPagedRushingRecords_ReturnsRemainder_OnFinalPage()
     {
-        var sut = CreateBasicSUT();
+        
         var pageNumber = 2;
         var sortBy = "Yards";
         var playerFilter = "";
+        var sut = CreateBasicSUT(sortBy, playerFilter, pageNumber);
 
         var records = sut.GetPagedRushingRecords(pageNumber, sortBy, playerFilter);
 
@@ -49,10 +50,11 @@ public class StatisticsServiceTests
     [TestMethod]
     public void GetPagedRushingRecords_ReturnsEmptySet_WhenPageExceedsRange()
     {
-        var sut = CreateBasicSUT();
         var pageNumber = 3;
         var sortBy = "Yards";
         var playerFilter = "";
+        var sut = CreateBasicSUT(sortBy, playerFilter, pageNumber);
+
 
         var records = sut.GetPagedRushingRecords(pageNumber, sortBy, playerFilter);
 
@@ -63,9 +65,12 @@ public class StatisticsServiceTests
     [TestMethod]
     public void GetRushingRecords_ReturnsRecordsSortedByYards_WhenArgumentsValid()
     {
-        var sut = CreateBasicSUT();
+
         var sortBy = "Yards";
         var playerFilter = "";
+        var pageNumber = 1;
+        var sut = CreateBasicSUT(sortBy, playerFilter, pageNumber);
+
 
         var records = sut.GetRushingRecords(sortBy, playerFilter);
 
@@ -74,16 +79,19 @@ public class StatisticsServiceTests
         Assert.IsTrue(records.Last().PlayerName.Equals("Reggie Bush"));
     }
 
-    private StatisticsService CreateBasicSUT() 
+    private StatisticsService CreateBasicSUT(string sortyBy, string playerFilter, int PageNumber) 
     {
-        IDataStore dataStore = Mock.Of<IDataStore>(d => d.GetRushingRecords() == GetCollectionRushingRecords());
+        var dataStore = new Mock<IDataStore>();
+        dataStore.Setup(d => d.GetRushingRecords(sortyBy, playerFilter, false)).Returns(GetCollectionRushingRecords);
+        dataStore.Setup(d => d.GetPagedRushingRecords(PageNumber, 10, sortyBy, playerFilter, false)).Returns(GetCollectionRushingRecords);
+
         var inMemorySettings = new Dictionary<string, string> {{ "ViewSettings:PageSize", "10"}};
 
         IConfiguration configuration = new ConfigurationBuilder()
             .AddInMemoryCollection(inMemorySettings)
             .Build();
 
-        return new StatisticsService(configuration, dataStore);
+        return new StatisticsService(configuration, dataStore.Object);
     }
 
     internal static IEnumerable<RushingRecord> GetCollectionRushingRecords()
