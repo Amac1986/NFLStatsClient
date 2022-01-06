@@ -12,6 +12,8 @@ namespace NFLStats.Model.Models
 
         public string Name { get; set; }
 
+        public List<Player> Players { get; set; }
+
 
     }
 }

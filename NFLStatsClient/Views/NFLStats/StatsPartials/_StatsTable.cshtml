@@ -3,11 +3,11 @@
     <table class="table table-striped table-bordered ">
         <thead>
             <tr class="statistics-table">
-                @Html.Raw(Model.Records.FirstOrDefault().GetHtmlHead())
+                @Html.Raw(Model?.Records.FirstOrDefault()?.GetHtmlHead())
             </tr>
         </thead>
         <tbody class="table-contents">
-                @{await Html.RenderPartialAsync("StatsPartials/_StatsTableData", Model.Records);}
+                @{await Html.RenderPartialAsync("StatsPartials/_StatsTableData", Model?.Records);}
         </tbody>
     </table>
 <div id="tableFooter">

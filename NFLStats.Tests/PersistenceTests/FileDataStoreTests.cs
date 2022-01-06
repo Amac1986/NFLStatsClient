@@ -1,95 +1,120 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Configuration;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Moq;
-using Newtonsoft.Json;
 using NFLStats.Model.Models;
-using NFLStats.Services.Interfaces;
-using NFLStats.Services.Services;
+using NFLStats.Persistence;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 
-namespace NFLStats.Tests.ServicesTests;
-
-[TestClass]
-public class StatisticsServiceTests
+namespace NFLStats.Tests.PersistenceTests
 {
-    [TestMethod]
-    public void GetPagedRushingRecords_ReturnsRecordsSortedByYards_WhenArgumentsValid() 
+    [TestClass]
+    public class FileDataStoreTests
     {
-        var sut = CreateBasicSUT();
-        var pageNumber = 1;
-        var sortBy = "Yards";
-        var playerFilter = "";
+        private readonly IConfiguration _configuration;
+        public FileDataStoreTests()
+        {
+            var inMemorySettings = new Dictionary<string, string> { { "ViewSettings:PageSize", "10" } };
+
+            _configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void GetPagedRushingRecords_ReturnsRecordsSortedByYards_WhenArgumentsValid()
+        {
+            var pageNumber = 1;
+            var sortBy = "Yards";
+            var playerFilter = "";
+            var pageSize = int.Parse(_configuration["ViewSettings:PageSize"]);
+            var sut = CreateBasicSUT(sortBy, playerFilter, pageNumber);
+
+            var records = sut.GetPagedRushingRecords(pageNumber, pageSize, sortBy, playerFilter);
+
+            Assert.AreEqual(10, records.Count());
+            Assert.IsTrue(records.First().PlayerName.Equals("Mark Ingram"));
+            Assert.IsTrue(records.Last().PlayerName.Equals("Brett Hundley"));
+            Assert.IsFalse(records.Any(r => r.PlayerName == "Reggie Bush"));
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void GetPagedRushingRecords_ReturnsRemainder_OnFinalPage()
+        {
+            //Arrange
+            var pageNumber = 2;
+            var sortBy = "Yards";
+            var playerFilter = "";
+            var pageSize = int.Parse(_configuration["ViewSettings:PageSize"]);
+            var sut = CreateBasicSUT(sortBy, playerFilter, pageNumber);
+
+            
+
+            //Act
+            var records = sut.GetPagedRushingRecords(pageNumber, pageSize, sortBy, playerFilter);
+
+            //Assert
+            Assert.AreEqual(1, records.Count());
+            Assert.IsTrue(records.First().PlayerName.Equals("Reggie Bush"));
+            Assert.IsTrue(records.Last().PlayerName.Equals("Reggie Bush"));
+        }
+
+        [Ignore]
+        [TestMethod]
+        public void GetPagedRushingRecords_ReturnsEmptySet_WhenPageExceedsRange()
+        {
+            var pageNumber = 3;
+            var sortBy = "Yards";
+            var playerFilter = "";
+            var pageSize = int.Parse(_configuration["ViewSettings:PageSize"]);
+            var sut = CreateBasicSUT(sortBy, playerFilter, pageNumber);
 
 
-        var records = sut.GetPagedRushingRecords(pageNumber, sortBy, playerFilter);
 
-        Assert.AreEqual(10, records.Count());
-        Assert.IsTrue(records.First().PlayerName.Equals("Mark Ingram"));
-        Assert.IsTrue(records.Last().PlayerName.Equals("Brett Hundley"));
-        Assert.IsFalse(records.Any(r => r.PlayerName == "Reggie Bush"));
-    }
+            var records = sut.GetPagedRushingRecords(pageNumber, pageSize, sortBy, playerFilter);
 
-    [TestMethod]
-    public void GetPagedRushingRecords_ReturnsRemainder_OnFinalPage()
-    {
-        var sut = CreateBasicSUT();
-        var pageNumber = 2;
-        var sortBy = "Yards";
-        var playerFilter = "";
+            Assert.AreEqual(0, records.Count());
+            Assert.IsFalse(records.Any());
+        }
 
-        var records = sut.GetPagedRushingRecords(pageNumber, sortBy, playerFilter);
+        [Ignore]
+        [TestMethod]
+        public void GetRushingRecords_ReturnsRecordsSortedByYards_WhenArgumentsValid()
+        {
 
-        Assert.AreEqual(1, records.Count());
-        Assert.IsTrue(records.First().PlayerName.Equals("Reggie Bush"));
-        Assert.IsTrue(records.Last().PlayerName.Equals("Reggie Bush"));
-    }
+            var sortBy = "Yards";
+            var playerFilter = "";
+            var pageNumber = 1;
+            var sut = CreateBasicSUT(sortBy, playerFilter, pageNumber);
 
-    [TestMethod]
-    public void GetPagedRushingRecords_ReturnsEmptySet_WhenPageExceedsRange()
-    {
-        var sut = CreateBasicSUT();
-        var pageNumber = 3;
-        var sortBy = "Yards";
-        var playerFilter = "";
 
-        var records = sut.GetPagedRushingRecords(pageNumber, sortBy, playerFilter);
+            var records = sut.GetRushingRecords(sortBy, playerFilter);
 
-        Assert.AreEqual(0, records.Count());
-        Assert.IsFalse(records.Any());
-    }
+            Assert.AreEqual(11, records.Count());
+            Assert.IsTrue(records.First().PlayerName.Equals("Mark Ingram"));
+            Assert.IsTrue(records.Last().PlayerName.Equals("Reggie Bush"));
+        }
 
-    [TestMethod]
-    public void GetRushingRecords_ReturnsRecordsSortedByYards_WhenArgumentsValid()
-    {
-        var sut = CreateBasicSUT();
-        var sortBy = "Yards";
-        var playerFilter = "";
+        private FileDataStore CreateBasicSUT(string sortyBy, string playerFilter, int PageNumber)
+        {
+            var inMemorySettings = new Dictionary<string, string> { { "ViewSettings:PageSize", "10" } , { "DataSettings:Statistics:RushingFile", "wwwroot/datafiles/rushing.json" } };
 
-        var records = sut.GetRushingRecords(sortBy, playerFilter);
+            IConfiguration configuration = new ConfigurationBuilder()
+                .AddInMemoryCollection(inMemorySettings)
+                .Build();
 
-        Assert.AreEqual(11, records.Count());
-        Assert.IsTrue(records.First().PlayerName.Equals("Mark Ingram"));
-        Assert.IsTrue(records.Last().PlayerName.Equals("Reggie Bush"));
-    }
+            var memoryCache = new Mock<IMemoryCache>();
 
-    private StatisticsService CreateBasicSUT() 
-    {
-        IDataStore dataStore = Mock.Of<IDataStore>(d => d.GetRushingRecords() == GetCollectionRushingRecords());
-        var inMemorySettings = new Dictionary<string, string> {{ "ViewSettings:PageSize", "10"}};
+            return new FileDataStore(configuration, memoryCache.Object);
+        }
 
-        IConfiguration configuration = new ConfigurationBuilder()
-            .AddInMemoryCollection(inMemorySettings)
-            .Build();
+        internal static IEnumerable<RushingRecord> GetCollectionRushingRecords()
+        {
 
-        return new StatisticsService(configuration, dataStore);
-    }
-
-    internal static IEnumerable<RushingRecord> GetCollectionRushingRecords()
-    {
-
-        return new List<RushingRecord>() {
+            return new List<RushingRecord>() {
             new RushingRecord() {
                 PlayerName="Joe Banyard",
                 TeamName="JAX",
@@ -279,5 +304,6 @@ public class StatisticsServiceTests
             }
         };
 
+        }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NFLStats.Services.Helpers;
+using NFLStats.Tests.PersistenceTests;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace NFLStats.Tests.ServicesTests
         [TestMethod]
         public void SortRecords_ReturnsSortedListDescending_ByDefault_ArgumentsValid() 
         {
-            var records = StatisticsServiceTests.GetCollectionRushingRecords();
+            var records = FileDataStoreTests.GetCollectionRushingRecords();
 
             var sorted = records.SortRecords("Yards");
 
@@ -24,7 +25,7 @@ namespace NFLStats.Tests.ServicesTests
         [TestMethod]
         public void SortRecords_ReturnsSortedListAscending_ArgumentsValid()
         {
-            var records = StatisticsServiceTests.GetCollectionRushingRecords();
+            var records = FileDataStoreTests.GetCollectionRushingRecords();
 
             var sorted = records.SortRecords("Yards", true);
 
@@ -45,16 +46,6 @@ namespace NFLStats.Tests.ServicesTests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(ArgumentException))]
-        public void SortRecords_ThrowsException_PropertyInvalid()
-        {
-            var records = StatisticsServiceTests.GetCollectionRushingRecords();
-
-            var sorted = records.SortRecords("NotAProperty");
-
-        }
-
-        [TestMethod]
         public void PageRecords_ReturnsEmptyList_EmptyListAsArgument()
         {
             var records = new List<RushingRecords>();
@@ -68,7 +59,7 @@ namespace NFLStats.Tests.ServicesTests
         [TestMethod]
         public void PageRecords_ReturnsTenRecords_PageOneRequested()
         {
-            var records = StatisticsServiceTests.GetCollectionRushingRecords();
+            var records = FileDataStoreTests.GetCollectionRushingRecords();
 
             var page = records.PageRecords(10, 1);
 
@@ -80,7 +71,7 @@ namespace NFLStats.Tests.ServicesTests
         [ExpectedException(typeof(ArgumentOutOfRangeException))]
         public void PageRecords_ThrowsArgumentOutOfRangeException_NegativePageNumber()
         {
-            var records = StatisticsServiceTests.GetCollectionRushingRecords();
+            var records = FileDataStoreTests.GetCollectionRushingRecords();
 
             records.PageRecords(10, -1);
 

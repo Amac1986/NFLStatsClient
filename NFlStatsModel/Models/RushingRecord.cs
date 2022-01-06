@@ -83,7 +83,10 @@ namespace NFLStats.Model.Models
 
         public override string ToCSV()
         {
-            return string.Join(",", GetType().GetProperties().Where(FilterProperty).Select(p => p.GetValue(this)).ToArray());
+            return string.Join(",", GetType().GetProperties()
+                .Where(FilterProperty)
+                .OrderBy(p => p.MetadataToken)
+                .Select(p => p.GetValue(this)).ToArray());
         }
 
         private bool FilterProperty(System.Reflection.PropertyInfo property) 
